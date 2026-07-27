@@ -211,7 +211,11 @@ const SEGS = [
     terminal:'Smart POS · bonificada 100%',
     acred:'0 · 2 · 7 · 15 · 21 · 30 · 45 días',
     planes:['1','3','6','9','12 cuotas'],
-    pr:{title:'6 cuotas · 21 días hábiles',ar:'1,99%',tasa:'11,49%',tot:'13,48%',deb:'3,19% + IVA'},
+    pr:{plazo:'21 días hábiles',deb:'3,19% + IVA',rows:[
+      {c:'3 cuotas', ar:'1,99%', tasa:'6,57%',  tot:'8,56%'},
+      {c:'6 cuotas', ar:'1,99%', tasa:'11,49%', tot:'13,48%'},
+      {c:'12 cuotas',ar:'1,99%', tasa:'15,86%', tot:'17,85%'},
+    ]},
     canal:{tipo:'bp', title:'Equipo Inbound', sub:'Formulario digital — el oficial puede cargarlo directamente'},
     hasForm:true,
     promos:PROMOS_BP,
@@ -226,7 +230,11 @@ const SEGS = [
     terminal:'Smart POS · bonificada 100%',
     acred:'0 · 2 · 7 · 15 · 21 · 30 · 45 días',
     planes:['1','3','6','9','12 cuotas'],
-    pr:{title:'6 cuotas · 21 días hábiles',ar:'2,49%',tasa:'11,49%',tot:'13,98%',deb:'2,39% + IVA'},
+    pr:{plazo:'21 días hábiles',deb:'2,39% + IVA',rows:[
+      {c:'3 cuotas', ar:'2,49%', tasa:'6,57%',  tot:'9,06%'},
+      {c:'6 cuotas', ar:'2,49%', tasa:'11,49%', tot:'13,98%'},
+      {c:'12 cuotas',ar:'2,49%', tasa:'15,86%', tot:'18,35%'},
+    ]},
     canal:{tipo:'bp', title:'Equipo Inbound', sub:'Formulario digital — el oficial puede cargarlo directamente'},
     hasForm:true,
     promos:PROMOS_BP,
@@ -241,7 +249,11 @@ const SEGS = [
     terminal:'Smart POS · bonificada 100%',
     acred:'0 · 2 · 7 · 15 · 21 · 30 · 45 días',
     planes:['1','3','6','9','12 cuotas'],
-    pr:{title:'6 cuotas · 21 días hábiles',ar:'1,49%',tasa:'11,49%',tot:'12,98%',deb:'1,99% + IVA'},
+    pr:{plazo:'21 días hábiles',deb:'1,99% + IVA',rows:[
+      {c:'3 cuotas', ar:'1,49%', tasa:'6,57%',  tot:'8,06%'},
+      {c:'6 cuotas', ar:'1,49%', tasa:'11,49%', tot:'12,98%'},
+      {c:'12 cuotas',ar:'1,49%', tasa:'15,86%', tot:'17,35%'},
+    ]},
     canal:{tipo:'bp-terreno', title:'Inbound o Equipo Terreno', sub:'Formulario digital (Inbound) o contacto directo con el asesor de zona (Terreno)'},
     hasForm:true,
     hasTerreno:true,
@@ -262,7 +274,11 @@ const SEGS = [
         terminal:'Smart POS · bonificada 100%',
         acred:'21 días hábiles',
         planes:['1','4','6','10','12','18 cuotas'],
-        pr:{title:'6 cuotas · 21 días hábiles · Rango medio',ar:'1,80%',tasa:'7,95%',tot:'9,75%',deb:'2,39% + IVA'},
+        pr:{plazo:'21 días hábiles · Rango Ideal',deb:'1,99% + IVA',rows:[
+          {c:'4 cuotas', ar:'1,80%', tasa:'4,75%',  tot:'6,55%'},
+          {c:'6 cuotas', ar:'1,80%', tasa:'7,69%',  tot:'9,49%'},
+          {c:'12 cuotas',ar:'1,80%', tasa:'15,86%', tot:'17,66%'},
+        ]},
         canal:{tipo:'gc', title:'Equipo Grandes Cuentas', sub:'Pablo Riera · pablo.riera@taca-taca.com.ar · 3513 76-8587', contacto:{nom:'Pablo Riera',mail:'pablo.riera@taca-taca.com.ar',tel:'3513 76-8587'}},
         promos:PROMOS_BP,
       },
@@ -406,6 +422,31 @@ function canalBlock(canal,hasForm,hasTerreno,brand){
 // PRICING BP
 // ════════════════════════════════════════════
 function bpPr(pr){
+  // Formato tabla multi-cuota
+  if(pr.rows){
+    const gcols='1.4fr 1fr 1fr 1fr';
+    const rows=pr.rows.map(r=>`
+      <div style="display:grid;grid-template-columns:${gcols};padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.12);font-size:11.5px;color:#fff">
+        <span style="font-weight:600">${r.c}</span>
+        <span style="opacity:.85">${r.ar}</span>
+        <span style="opacity:.85">${r.tasa}</span>
+        <span style="font-weight:700">${r.tot}</span>
+      </div>`).join('');
+    return `<div style="border-radius:10px;overflow:hidden;background:var(--bp)">
+      <div style="padding:8px 12px 6px;font-size:10px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.05em;text-transform:uppercase">Planes · Plazo de acreditación ${pr.plazo}</div>
+      <div style="display:grid;grid-template-columns:${gcols};padding:5px 12px 5px;background:rgba(0,0,0,.15)">
+        <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em">Plan</span>
+        <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em">Arancel</span>
+        <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em">Tasa</span>
+        <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em">Al comercio</span>
+      </div>
+      ${rows}
+      <div style="display:flex;justify-content:space-between;padding:7px 12px;font-size:11px;color:rgba(255,255,255,.75);border-top:1px solid rgba(255,255,255,.2)">
+        <span>Débito inmediato</span><span style="font-weight:600;color:#fff">${pr.deb}</span>
+      </div>
+    </div>`;
+  }
+  // Formato legado (single)
   return `<div class="pblock" style="background:var(--bp)">
     <div class="phdr" style="color:#fff">${pr.title}</div>
     <div class="prow" style="color:#fff"><span class="plbl">Arancel</span><span class="pval">${pr.ar}</span></div>
