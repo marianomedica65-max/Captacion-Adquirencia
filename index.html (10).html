@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Segmentación Comercial · Bezza Pay / Fiserv</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#004040;--teal2:#006B6B;--ora:#E8501A;
+  --bp:#D4006A;--bpl:#F9D0E5;--bpd:#7B0040;
+  --fis:#E87722;--fisl:#FDE9D5;--fisd:#7B3000;
+  --am:#854F0B;--aml:#FFF2CC;
+  --g:#F0F4F4;--g2:#D8E4E4;--g3:#6B8080;--txt:#1A2A2A;
+  --s2:#F8FBFB;
+  --ok-bg:#E6F4EC;--ok-c:#155724;
+  --wa-bg:#FFF3CD;--wa-c:#7B5800;
+}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--g);color:var(--txt);font-size:14px;line-height:1.5}
+
+/* HEADER */
+.hdr{background:var(--teal);padding:13px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--ora);gap:12px}
+.hdr-brand{display:flex;align-items:center;gap:14px}
+.hdr-title{color:#fff;font-size:16px;font-weight:700}
+.hdr-sub{color:rgba(255,255,255,.6);font-size:11px;margin-top:1px}
+
+/* NAV SEGMENTOS */
+.nav{display:flex;background:var(--teal2);overflow-x:auto;padding:0 24px;gap:0}
+.nav button{padding:11px 18px;font-size:12.5px;font-weight:500;cursor:pointer;border:none;background:none;color:rgba(255,255,255,.65);border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
+.nav button:hover{color:#fff}
+.nav button.on{color:#fff;border-color:var(--ora);font-weight:600}
+
+/* CONTENT */
+.content{padding:20px 24px;max-width:1300px;margin:0 auto}
+.seg{display:none}.seg.on{display:block}
+
+/* INFO TABS */
+.itabs{display:flex;gap:7px;margin-bottom:20px;flex-wrap:wrap}
+.it{padding:6px 15px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--g2);background:#fff;color:var(--g3);transition:all .15s}
+.it:hover{border-color:var(--teal);color:var(--teal)}
+.it.on-bp{background:var(--bp);border-color:var(--bp);color:#fff}
+.it.on-fis{background:var(--fis);border-color:var(--fis);color:#fff}
+.it.on-am{background:var(--am);border-color:var(--am);color:#fff}
+.it.on-ov{background:var(--teal);border-color:var(--teal);color:#fff}
+
+/* SEG HEADER */
+.seg-badge{display:inline-flex;align-items:center;padding:3px 14px;border-radius:100px;font-size:10.5px;font-weight:700;letter-spacing:.05em;margin-bottom:9px}
+.seg-title{font-size:22px;font-weight:700;margin-bottom:3px}
+.seg-sub{font-size:12.5px;color:var(--g3);margin-bottom:18px}
+
+/* CARDS GRID */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.card{background:#fff;border-radius:14px;border:1px solid var(--g2);overflow:hidden;box-shadow:0 1px 4px rgba(0,64,64,.06)}
+.card-top{padding:13px 16px}
+.card-top-t{font-size:12px;font-weight:700;color:#fff;letter-spacing:.03em}
+.card-top-s{font-size:10.5px;color:rgba(255,255,255,.8);margin-top:2px}
+.card-body{padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.rlbl{font-size:10px;font-weight:700;color:var(--g3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.rval{font-size:12.5px;color:var(--txt);line-height:1.55}
+
+/* PILLS */
+.pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.pill{font-size:10.5px;font-weight:500;padding:3px 10px;border-radius:100px}
+.pbp{background:var(--bpl);color:var(--bpd)}
+.pfis{background:var(--fisl);color:var(--fisd)}
+.pn{background:var(--g);color:var(--g3);border:1px solid var(--g2)}
+
+/* PRICING BLOCK */
+.pblock{border-radius:10px;padding:13px 15px}
+.phdr{font-size:10px;font-weight:700;margin-bottom:8px;letter-spacing:.03em;opacity:.85}
+.prow{display:flex;justify-content:space-between;font-size:11.5px;padding:3.5px 0;border-top:1px solid rgba(255,255,255,.12)}
+.prow:first-of-type{border-top:none}
+.plbl{opacity:.75}
+.pval{font-weight:600}
+.ptot{display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.3)}
+.ptot-l{font-size:11.5px;font-weight:600}
+.ptot-v{font-size:20px;font-weight:700}
+.pdeb{display:flex;justify-content:space-between;font-size:10px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.15)}
+
+/* FIS TABLE */
+.fis-wrap{border-radius:8px;overflow:hidden;border:1.5px solid var(--fisl)}
+.fis-th-row{background:var(--fis);display:grid;padding:6px 11px;font-size:10px;font-weight:600;color:#fff;letter-spacing:.04em}
+.fis-row{display:grid;padding:6.5px 11px;font-size:11.5px;border-bottom:1px solid var(--fisl);background:#fff}
+.fis-row:last-child{border-bottom:none}
+.fis-deb{background:var(--fisl);border-top:1px solid #f5c99a;padding:7px 11px;font-size:11px;display:flex;justify-content:space-between;color:var(--fisd)}
+
+/* CANAL BLOCK */
+.cblock{border-radius:10px;padding:12px 15px}
+.cblock-t{font-size:12.5px;font-weight:700;margin-bottom:3px}
+.cblock-s{font-size:11.5px;line-height:1.5;opacity:.85}
+
+/* FORM LINK */
+.form-link{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:9px;text-decoration:none;font-size:12.5px;font-weight:600;margin-top:8px;transition:all .15s}
+.form-link:hover{opacity:.88;transform:translateY(-1px)}
+.form-link svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+/* BUSCADOR TERRENO */
+.search-wrap{background:#fff;border-radius:14px;border:1px solid var(--g2);overflow:hidden;box-shadow:0 1px 4px rgba(0,64,64,.06)}
+.search-hdr{padding:13px 18px;border-bottom:1px solid var(--g2);background:var(--s2)}
+.search-hdr-t{font-size:14px;font-weight:700}
+.search-hdr-s{font-size:12px;color:var(--g3);margin-top:2px}
+.search-body{padding:16px 18px}
+.search-input{width:100%;padding:9px 14px;border-radius:9px;border:1.5px solid var(--g2);font-size:13px;outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--teal2);box-shadow:0 0 0 3px rgba(0,107,107,.1)}
+.search-input::placeholder{color:#aaa}
+.search-results{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+.asesor-card{border-radius:11px;border:1.5px solid var(--g2);overflow:hidden;background:#fff}
+.asesor-head{padding:11px 15px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--g2)}
+.asesor-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;color:#fff}
+.asesor-name{font-size:13px;font-weight:700;color:var(--txt)}
+.asesor-role{font-size:11px;color:var(--g3);margin-top:1px}
+.asesor-contacts{display:flex;gap:12px;padding:10px 15px;background:var(--s2);flex-wrap:wrap}
+.asesor-contact{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--g3)}
+.asesor-contact a{color:var(--teal2);text-decoration:none;font-weight:500}
+.asesor-contact a:hover{text-decoration:underline}
+.asesor-zones{padding:11px 15px;display:flex;flex-wrap:wrap;gap:5px}
+.zone-match{background:var(--ok-bg);color:var(--ok-c);border:1px solid #A3D7B5}
+.zone-tag{font-size:11px;font-weight:500;padding:3px 9px;border-radius:100px;background:var(--g);color:var(--g3);border:1px solid var(--g2)}
+.no-results{text-align:center;padding:28px;color:var(--g3);font-size:13px;font-style:italic}
+
+/* PROMO BLOCK */
+.promo-box{border-radius:9px;padding:11px 13px;border:1.5px dashed}
+.promo-item{font-size:11.5px;display:flex;align-items:flex-start;gap:6px;padding:3px 0;line-height:1.4}
+.promo-dot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0;margin-top:5px}
+
+/* OVERVIEW TABLE */
+.ov-table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,70,70,.1)}
+.ov-table thead{background:var(--teal)}
+.ov-table th{padding:11px 15px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#fff;text-align:left}
+.ov-table td{padding:11px 15px;font-size:12.5px;border-bottom:1px solid var(--g2);background:#fff;vertical-align:middle}
+.ov-table tbody tr:hover td{background:var(--g);cursor:pointer}
+.ov-table tbody tr:last-child td{border-bottom:none}
+
+/* DUAL LAYOUT */
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dual-note{background:var(--aml);border:1.5px solid #E2A23B;border-radius:10px;padding:11px 15px;font-size:12px;color:var(--am);margin-bottom:16px;line-height:1.7}
+
+/* CONTACTOS RESUMEN */
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:16px}
+.contact-card{background:#fff;border-radius:12px;border:1px solid var(--g2);padding:15px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 1px 3px rgba(0,64,64,.05)}
+.contact-card-title{font-size:11px;font-weight:700;color:var(--g3);text-transform:uppercase;letter-spacing:.07em}
+.contact-card-name{font-size:14px;font-weight:700;color:var(--txt)}
+.contact-card-row{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--g3)}
+.contact-card-row a{color:var(--teal2);text-decoration:none;font-weight:500}
+.contact-card-row a:hover{text-decoration:underline}
+.contact-card-row svg{width:14px;height:14px;flex-shrink:0;color:var(--g3)}
+.web-link{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;background:var(--teal);color:#fff;text-decoration:none;font-size:12.5px;font-weight:600;transition:all .15s;margin-top:6px}
+.web-link:hover{background:var(--teal2)}
+.web-link svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+@media(max-width:700px){.dual{grid-template-columns:1fr}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-brand">
+    <div>
+      <div class="hdr-title">Segmentación Comercial · Bezza Pay / Fiserv</div>
+      <div class="hdr-sub">Guía de derivación por volumen mensual del comercio · Sucursales Bancor</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV SEGMENTOS -->
+<div class="nav" id="nav"></div>
+
+<!-- CONTENT -->
+<div class="content" id="content"></div>
+
+<script>
+// ════════════════════════════════════════════
+// DATOS ASESORES TERRENO
+// ════════════════════════════════════════════
+const ASESORES = [
+  {
+    nom:'Yanina Correa', color:'#D4006A',
+    mail:'yanina.correa@taca-taca.com.ar', tel:'3513 76-8554',
+    zonas:['Río Cuarto','Arroyito','La Francia','Porteña','San Francisco','Alicia','La Para','Miramar de Ansenuza','Balnearia','Las Varillas','Brinkmann','Villa María','Morteros','Freyre','Sgo. Temple','Alcira Gigena','Arroyo Cabral','Calchín','Col. Marina','Col. San Bartolomé','Del Campillo','El Fortín','La Tordilla','Las Higueras','Ordoñez','Tránsito']
+  },
+  {
+    nom:'Yohana Pérez', color:'#006B6B',
+    mail:'yohana@taca-taca.com.ar', tel:'3513 58-0826',
+    zonas:['Alta Gracia','Villa Allende','La Calera','Río Ceballos','Laguna Larga','Mendiolaza','Villa Ciudad de América','Cruz del Eje','Pilar','Río Segundo','Agua de Oro','Calchín Oeste','Canals','Costa Sacate','Jesús María','La Cesira','Malagueño','Mina Clavero','Montecristo','Mte. Cristo','Quilino','Río Tercero','Saldán','Salsipuedes','San Lorenzo','San Marcos Sierras','Unquillo','Villa Ascasubi','Villa Ciudad Pque Los Reartes','Villa General Belgrano','Villa Pque. Santa Ana','Villa Rumipal']
+  },
+  {
+    nom:'Gabriel Erias', color:'#E8501A',
+    mail:'gabriel.erias@taca-taca.com.ar', tel:'3516 32-2966',
+    zonas:['Córdoba','Villa Carlos Paz','Arguello','Cosquín','Huerta Grande','Nueva Córdoba','Villa Santa Cruz']
+  },
+];
+
+// ════════════════════════════════════════════
+// DATOS SEGMENTOS
+// ════════════════════════════════════════════
+const PROMOS_BP = ['Efemérides comerciales — promociones en rubros seleccionados','Promos Cordobesa — cuotas y descuentos con tarjetas Bancor','Martes de débito 0% — sin costo para el comercio los días martes'];
+const PROMOS_FIS = ['Efemérides comerciales — promociones en rubros seleccionados'];
+
+const SEGS = [
+  {
+    id:'overview', label:'Resumen',
+  },
+  {
+    id:'micro', label:'Micro', range:'Hasta $5M / mes',
+    badge:'BEZZA PAY', badgeBg:'linear-gradient(135deg,#D4006A,#A80055)', brand:'bp',
+    desc:'Monotributistas · persona física · sin análisis adicional',
+    pv:'Propuesta Estructural',
+    tipo:'Kiosco, verdulería, carnicería, almacén, panadería, peluquería, ropa y calzado, librería, ferretería pequeña, etc.',
+    modos:['QR presencial','POS Smart','Link de pago','Tienda online gratuita'],
+    terminal:'Smart POS · bonificada 100%',
+    acred:'0 · 2 · 7 · 15 · 21 · 30 · 45 días',
+    planes:['1','3','6','9','12 cuotas'],
+    pr:{title:'6 cuotas · 21 días hábiles',ar:'1,99%',tasa:'11,49%',tot:'13,48%',deb:'3,19% + IVA'},
+    canal:{tipo:'bp', title:'Equipo Inbound', sub:'Formulario digital — el oficial puede cargarlo directamente'},
+    hasForm:true,
+    promos:PROMOS_BP,
+  },
+  {
+    id:'pequeño', label:'Pequeño', range:'$5M – $10M / mes',
+    badge:'BEZZA PAY', badgeBg:'linear-gradient(135deg,#D4006A,#A80055)', brand:'bp',
+    desc:'Monotributistas categorías H–K · Responsable Inscripto',
+    pv:'Propuesta Tier 2',
+    tipo:'Taller mecánico, perfumería, farmacia, indumentaria, materiales de construcción, óptica, etc.',
+    modos:['QR presencial','POS Smart','Link de pago','Tienda online gratuita'],
+    terminal:'Smart POS · bonificada 100%',
+    acred:'0 · 2 · 7 · 15 · 21 · 30 · 45 días',
+    planes:['1','3','6','9','12 cuotas'],
+    pr:{title:'6 cuotas · 21 días hábiles',ar:'2,49%',tasa:'11,49%',tot:'13,98%',deb:'2,39% + IVA'},
+    canal:{tipo:'bp', title:'Equipo Inbound', sub:'Formulario digital — el oficial puede cargarlo directamente'},
+    hasForm:true,
+    promos:PROMOS_BP,
+  },
+  {
+    id:'mediano', label:'Mediano', range:'$10M – $30M / mes',
+    badge:'BEZZA PAY', badgeBg:'linear-gradient(135deg,#D4006A,#A80055)', brand:'bp',
+    desc:'Responsable Inscripto consolidado',
+    pv:'Propuesta Tier 3',
+    tipo:'Electrodomésticos, mueblería, taller grande, cadena de ropa, farmacia, pinturería, colchonería, juguetería, etc.',
+    modos:['QR presencial','POS Smart','Link de pago','Tienda online gratuita'],
+    terminal:'Smart POS · bonificada 100%',
+    acred:'0 · 2 · 7 · 15 · 21 · 30 · 45 días',
+    planes:['1','3','6','9','12 cuotas'],
+    pr:{title:'6 cuotas · 21 días hábiles',ar:'1,49%',tasa:'11,49%',tot:'12,98%',deb:'1,99% + IVA'},
+    canal:{tipo:'bp-terreno', title:'Inbound o Equipo Terreno', sub:'Formulario digital (Inbound) o contacto directo con el asesor de zona (Terreno)'},
+    hasForm:true,
+    hasTerreno:true,
+    promos:PROMOS_BP,
+  },
+  {
+    id:'grandes', label:'Grandes Cuentas', range:'$30M – $40M / mes',
+    badge:'ZONA DE ANÁLISIS', badgeBg:'linear-gradient(135deg,#854F0B,#633806)', brand:'dual',
+    desc:'Evaluar la solución según el perfil del comercio',
+    dual:true,
+    vars:['1 a 3 locales → Bezza Pay   ·   4 o más sucursales → Fiserv/Payway','Necesidad de integración con sistema de gestión (ERP)','Operatoria solo presencial o también remota / online'],
+    options:[
+      {
+        label:'Bezza Pay — Grandes Cuentas', hdrBg:'linear-gradient(135deg,#D4006A,#A80055)', brand:'bp',
+        cond:'1 a 3 locales · sin ERP · presencial',
+        tipo:'Empresa mediana · cadena de ropa, distribuidora local, materiales con varias bocas, etc.',
+        modos:['QR presencial','POS Smart','Link de pago','Tienda online'],
+        terminal:'Smart POS · bonificada 100%',
+        acred:'21 días hábiles',
+        planes:['1','4','6','10','12','18 cuotas'],
+        pr:{title:'6 cuotas · 21 días hábiles · Rango medio',ar:'1,80%',tasa:'7,95%',tot:'9,75%',deb:'2,39% + IVA'},
+        canal:{tipo:'gc', title:'Equipo Grandes Cuentas', sub:'Pablo Riera · pablo.riera@taca-taca.com.ar · 3513 76-8587', contacto:{nom:'Pablo Riera',mail:'pablo.riera@taca-taca.com.ar',tel:'3513 76-8587'}},
+        promos:PROMOS_BP,
+      },
+      {
+        label:'Fiserv / Payway — Inicial', hdrBg:'linear-gradient(135deg,#E87722,#C55E00)', brand:'fis',
+        cond:'4 o más sucursales · ERP · e-commerce · alto débito',
+        tipo:'Cadena multisucursal, distribuidora con ERP, comercio con venta online activa, etc.',
+        modos:['POS multisucursal','E-commerce','Integración ERP'],
+        terminal:'POS Fiserv · bonificada 1 año — nuevas adhesiones',
+        acred:'1 día hábil (débito)',
+        fisPr:{title:'FISERV INICIAL',rows:[{c:'3 cuotas',t:'3,25%',a:'1,80%',p:'20 días hábiles'},{c:'6 cuotas',t:'7,57%',a:'1,80%',p:'20 días hábiles'},{c:'12 cuotas',t:'15,45%',a:'1,80%',p:'20 días hábiles'}]},
+        canal:{tipo:'suc', title:'Sucursal Bancor', sub:'Alta de comercio y planes de financiación a través de la sucursal'},
+        promos:PROMOS_FIS,
+      }
+    ],
+  },
+  {
+    id:'estrategico', label:'Estratégico', range:'Más de $40M / mes',
+    badge:'FISERV / PAYWAY', badgeBg:'linear-gradient(135deg,#E87722,#C55E00)', brand:'fis',
+    desc:'Empresa grande · corporativo · gestión a través de la sucursal',
+    pv:'Fiserv Ideal',
+    tipo:'Supermercado, cadena retail, distribuidora regional, estación de servicio, hotelería cadena, etc.',
+    modos:['POS multisucursal','E-commerce','Integración ERP'],
+    terminal:'POS Fiserv · bonificada 1 año — nuevas adhesiones',
+    acred:'1 día hábil (débito)',
+    fisPr:{title:'FISERV IDEAL',rows:[{c:'3 cuotas',t:'2,94%',a:'1,80%',p:'20 días hábiles'},{c:'6 cuotas',t:'6,88%',a:'1,80%',p:'20 días hábiles'},{c:'12 cuotas',t:'14,11%',a:'1,80%',p:'20 días hábiles'}]},
+    canal:{tipo:'suc', title:'Sucursal Bancor', sub:'Alta de comercio y planes de financiación a través de la sucursal'},
+    promos:PROMOS_FIS,
+  },
+];
+
+// ════════════════════════════════════════════
+// BUSCADOR TERRENO
+// ════════════════════════════════════════════
+function buildBuscador(){
+  return `<div class="search-wrap">
+    <div class="search-hdr">
+      <div class="search-hdr-t">Buscador de asesor de terreno por zona</div>
+      <div class="search-hdr-s">Ingresá el nombre de tu localidad o sucursal para encontrar el asesor que trabaja esa zona</div>
+    </div>
+    <div class="search-body">
+      <input class="search-input" id="terreno-search" placeholder="🔍  Ej: Malagueño, Villa Carlos Paz, Río Cuarto..." oninput="searchTerreno(this.value)">
+      <div class="search-results" id="terreno-results">
+        <div class="no-results" style="color:var(--g3);padding:20px;text-align:center;font-size:13px">Escribí una localidad para ver el asesor de esa zona</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function searchTerreno(q){
+  const q2=q.trim().toLowerCase();
+  const el=document.getElementById('terreno-results');
+  if(!q2){el.innerHTML='<div class="no-results">Escribí una localidad para ver el asesor de esa zona</div>';return;}
+  const matches=ASESORES.map(a=>{
+    const zonas=a.zonas.filter(z=>z.toLowerCase().includes(q2));
+    return{...a,zonas,matched:zonas.length>0};
+  }).filter(a=>a.matched);
+  if(!matches.length){el.innerHTML=`<div class="no-results">Sin resultados para "<strong>${q}</strong>". Probá con otra localidad.</div>`;return;}
+  el.innerHTML=matches.map(a=>`
+    <div class="asesor-card">
+      <div class="asesor-head">
+        <div class="asesor-avatar" style="background:${a.color}">${a.nom.split(' ').map(p=>p[0]).join('').slice(0,2)}</div>
+        <div>
+          <div class="asesor-name">${a.nom}</div>
+          <div class="asesor-role">Asesor de Terreno · Bezza Pay</div>
+        </div>
+      </div>
+      <div class="asesor-contacts">
+        <span class="asesor-contact"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:${a.mail}">${a.mail}</a></span>
+        <span class="asesor-contact"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.36 1.18 2 2 0 012.34 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.34 6.34l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg><a href="tel:${a.tel.replace(/\s/g,'')}">${a.tel}</a></span>
+      </div>
+      <div class="asesor-zones">
+        ${a.zonas.map(z=>`<span class="zone-tag zone-match">${z}</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════
+// CANAL BLOCK
+// ════════════════════════════════════════════
+const REFERENTES_FISERV = [
+  {zona:'Córdoba Capital',   nom:'Agustina Buteler',    mail:'abuteler@bancor.com.ar',   tel:'351 208-9738'},
+  {zona:'Villa Carlos Paz',  nom:'Mariana Piñevsky',    mail:'mpinievsky@bancor.com.ar', tel:'351 615-5529'},
+  {zona:'San Francisco',     nom:'Mariano Bertazzo',    mail:'mbertazzo@bancor.com.ar',  tel:'351 201-9160'},
+  {zona:'Villa María',       nom:'Juan Pablo Ávila',    mail:'javila@bancor.com.ar',     tel:'351 519-7253'},
+  {zona:'Río Cuarto',        nom:'Mariela Menossi',     mail:'mmenossi@bancor.com.ar',   tel:'3584 838-719'},
+];
+
+function canalBlock(canal,hasForm,hasTerreno,brand){
+  const bg=brand==='fis'?'var(--fis)':brand==='dual'?'var(--am)':'var(--teal)';
+  let html=`<div class="cblock" style="background:${bg}">
+    <div class="cblock-t" style="color:#fff">${canal.title}</div>
+    <div class="cblock-s" style="color:rgba(255,255,255,.85)">${canal.sub}</div>`;
+  if(hasForm){
+    html+=`<a href="https://share.hsforms.com/1Ev3hyOWTTOe9PsI3cA1bIQrtdid" target="_blank" rel="noopener" class="form-link" style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.35)">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Cargar formulario de alta
+    </a>`;
+  }
+  if(canal.contacto){
+    html+=`<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.2);font-size:11.5px;color:rgba(255,255,255,.85)">
+      <div style="font-weight:700;color:#fff;margin-bottom:3px">${canal.contacto.nom}</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a href="mailto:${canal.contacto.mail}" style="color:rgba(255,255,255,.9);text-decoration:none">${canal.contacto.mail}</a>
+        <span>${canal.contacto.tel}</span>
+      </div>
+    </div>`;
+  }
+  html+='</div>';
+  if(canal.tipo==='suc'){
+    html+=`<div style="margin-top:14px;background:#fff;border-radius:12px;border:1.5px solid var(--fisl);overflow:hidden">
+      <div style="background:var(--fisd);padding:9px 15px;display:flex;align-items:center;gap:8px">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <span style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.06em">Referentes comerciales por zonal — Red Especialistas Bancor</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+          <thead><tr style="background:var(--fisl)">
+            <th style="padding:8px 14px;text-align:left;font-size:10.5px;font-weight:600;color:var(--fisd);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">Zonal</th>
+            <th style="padding:8px 14px;text-align:left;font-size:10.5px;font-weight:600;color:var(--fisd);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">Referente</th>
+            <th style="padding:8px 14px;text-align:left;font-size:10.5px;font-weight:600;color:var(--fisd);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">Email</th>
+            <th style="padding:8px 14px;text-align:left;font-size:10.5px;font-weight:600;color:var(--fisd);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">Celular</th>
+          </tr></thead>
+          <tbody>${REFERENTES_FISERV.map((r,i)=>`<tr style="border-bottom:1px solid var(--fisl);background:${i%2===0?'#fff':'#fffaf6'}">
+            <td style="padding:9px 14px;font-weight:600;color:var(--fisd);white-space:nowrap">${r.zona}</td>
+            <td style="padding:9px 14px;color:var(--txt)">${r.nom}</td>
+            <td style="padding:9px 14px"><a href="mailto:${r.mail}" style="color:var(--fis);text-decoration:none;font-weight:500">${r.mail}</a></td>
+            <td style="padding:9px 14px;color:var(--g3);white-space:nowrap">${r.tel}</td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }
+  if(hasTerreno){
+    html+=`<div style="margin-top:14px">${buildBuscador()}</div>`;
+  }
+  return html;
+}
+
+// ════════════════════════════════════════════
+// PRICING BP
+// ════════════════════════════════════════════
+function bpPr(pr){
+  return `<div class="pblock" style="background:var(--bp)">
+    <div class="phdr" style="color:#fff">${pr.title}</div>
+    <div class="prow" style="color:#fff"><span class="plbl">Arancel</span><span class="pval">${pr.ar}</span></div>
+    <div class="prow" style="color:#fff"><span class="plbl">Tasa directa</span><span class="pval">${pr.tasa}</span></div>
+    <div class="ptot"><span class="ptot-l" style="color:#fff">Al comercio</span><span class="ptot-v" style="color:#fff">${pr.tot}</span></div>
+    <div class="pdeb" style="color:#fff"><span>Débito</span><span style="font-weight:600">${pr.deb}</span></div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// PRICING FISERV
+// ════════════════════════════════════════════
+function fisPr(fp){
+  const gcols='1fr 1fr 1fr 1fr';
+  const rows=fp.rows.map(r=>`<div class="fis-row" style="grid-template-columns:${gcols}"><span>${r.c}</span><span>${r.t}</span><span>${r.a}</span><span>${r.p}</span></div>`).join('');
+  return `<div class="fis-wrap">
+    <div style="background:var(--fisd);padding:6px 11px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#fff">${fp.title}</div>
+    <div class="fis-th-row" style="grid-template-columns:${gcols}"><span>Financiación</span><span>Tasa directa</span><span>Arancel</span><span>Plazo de pago</span></div>
+    ${rows}
+    <div class="fis-deb"><span>Tarjeta de débito</span><span style="font-weight:700">0,80% + IVA · acreditación 1 día hábil</span></div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// PROMOS BLOCK
+// ════════════════════════════════════════════
+function promosBlock(promos,brand){
+  const bc=brand==='fis'?'var(--fisl)':'#F9D0E5';
+  const dc=brand==='fis'?'var(--fis)':'var(--bp)';
+  return `<div class="promo-box" style="background:${bc};border-color:${dc}">
+    ${promos.map(p=>`<div class="promo-item"><span class="promo-dot" style="background:${dc}"></span><span style="color:var(--txt)">${p}</span></div>`).join('')}
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// SECTION BUILDER
+// ════════════════════════════════════════════
+function buildSections(data,info,brand){
+  const todo=info==='todo';
+  const col=brand==='fis'?'var(--fis)':brand==='dual'?'var(--am)':'var(--teal)';
+  function secHdr(lbl){return todo?`<div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:${col};margin:16px 0 8px;padding-bottom:5px;border-bottom:1.5px solid var(--g2);display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:${col};display:inline-block"></span>${lbl}</div>`:''}
+  const ps=[];
+  if(todo||info==='cliente'){ps.push(secHdr('Tipo de cliente'));ps.push(`<div class="rval">${data.tipo}</div>`);}
+  if(todo||info==='cobro'){ps.push(secHdr('Modalidad de cobro'));ps.push(`<div class="pills">${data.modos.map(m=>`<span class="pill ${brand==='fis'?'pfis':'pbp'}">${m}</span>`).join('')}</div>`);}
+  if(todo||info==='terminal'){
+    ps.push(secHdr('Terminal y acreditación'));
+    ps.push(`<div><div class="rlbl">Terminal</div><div class="rval"><strong>${data.terminal}</strong></div></div>`);
+    ps.push(`<div><div class="rlbl">Acreditación</div><div class="rval">${data.acred||data.acreditacion||'Según plan'}</div></div>`);
+    if(data.planes&&data.planes.length) ps.push(`<div><div class="rlbl">Planes de cuotas</div><div class="pills">${data.planes.map(p=>`<span class="pill pbp">${p}</span>`).join('')}</div></div>`);
+  }
+  if(todo||info==='pricing'){
+    ps.push(secHdr('Condiciones y aranceles'));
+    if(brand==='bp'&&data.pr) ps.push(bpPr(data.pr));
+    else if(data.fisPr) ps.push(fisPr(data.fisPr));
+  }
+  if(todo||info==='promos'){ps.push(secHdr('Promociones'));ps.push(promosBlock(data.promos,brand));}
+  if(todo||info==='canal'){
+    ps.push(secHdr('Canal de derivación'));
+    ps.push(canalBlock(data.canal,data.hasForm,data.hasTerreno,brand));
+  }
+  return ps.join('');
+}
+
+// ════════════════════════════════════════════
+// RENDER OVERVIEW
+// ════════════════════════════════════════════
+function renderOverview(){
+  const rows=[
+    {seg:'Micro',range:'Hasta $5M/mes',sol:'Bezza Pay',pv:'Estructural',term:'Smart POS 100%',bg:'var(--bp)',id:'micro'},
+    {seg:'Pequeño',range:'$5M – $10M/mes',sol:'Bezza Pay',pv:'Tier 2',term:'Smart POS 100%',bg:'var(--bp)',id:'pequeño'},
+    {seg:'Mediano',range:'$10M – $30M/mes',sol:'Bezza Pay',pv:'Tier 3',term:'Smart POS 100%',bg:'var(--bp)',id:'mediano'},
+    {seg:'Grandes Cuentas',range:'$30M – $40M/mes',sol:'BP o Fiserv',pv:'Según análisis',term:'Según solución',bg:'var(--am)',id:'grandes'},
+    {seg:'Estratégico',range:'Más de $40M/mes',sol:'Fiserv/Payway',pv:'Fiserv Ideal',term:'POS Fiserv 1 año',bg:'var(--fis)',id:'estrategico'},
+  ];
+  return `
+    <div style="font-size:20px;font-weight:700;color:var(--teal);margin-bottom:4px">Segmentación comercial</div>
+    <div style="font-size:12px;color:var(--g3);margin-bottom:18px">Hacé clic en un segmento para ver el detalle completo</div>
+    <table class="ov-table">
+      <thead><tr><th>Segmento</th><th>Solución propuesta</th><th>Propuesta de valor</th><th>Terminal</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr onclick="goSeg('${r.id}')">
+        <td><span style="display:inline-block;padding:3px 12px;border-radius:100px;font-size:11px;font-weight:600;background:${r.bg};color:#fff">${r.seg}</span><br><span style="font-size:11px;color:var(--g3)">${r.range}</span></td>
+        <td style="font-weight:600">${r.sol}</td>
+        <td><span style="font-size:11px;background:var(--g);color:var(--g3);padding:2px 9px;border-radius:6px;border:1px solid var(--g2)">${r.pv}</span></td>
+        <td style="font-size:12px">${r.term}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+
+    <div style="margin-top:28px;font-size:15px;font-weight:700;color:var(--teal);margin-bottom:4px">Contactos clave</div>
+    <div style="font-size:12px;color:var(--g3);margin-bottom:4px">Derivá las consultas al canal correcto para agilizar la resolución</div>
+
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-card-title">Equipo Grandes Cuentas</div>
+        <div class="contact-card-name">Pablo Riera</div>
+        <div class="contact-card-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:pablo.riera@taca-taca.com.ar">pablo.riera@taca-taca.com.ar</a>
+        </div>
+        <div class="contact-card-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.36 1.18 2 2 0 012.34 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.34 6.34l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          3513 76-8587
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-card-title">Coordinador de Sucursales</div>
+        <div class="contact-card-name">Juan Buteler</div>
+        <div style="font-size:11.5px;color:var(--g3);margin-bottom:4px">Consultas de oficiales sobre operatoria, estado de derivaciones y promociones</div>
+        <div class="contact-card-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:juan.buteler@taca-taca.com.ar">juan.buteler@taca-taca.com.ar</a>
+        </div>
+        <div class="contact-card-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:cbuteler@bancor.com.ar">cbuteler@bancor.com.ar</a>
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-card-title">Atención al cliente — Comercios</div>
+        <div class="contact-card-name" style="font-size:18px;color:var(--teal)">351-705-9149</div>
+        <div style="font-size:11.5px;color:var(--g3);line-height:1.5">Para consultas particulares de un comercio que <strong>ya opera</strong> con nuestra solución de cobro. No usar para derivaciones nuevas.</div>
+      </div>
+
+      <div class="contact-card" style="border-color:var(--teal);background:linear-gradient(135deg,#f0f8f8,#fff)">
+        <div class="contact-card-title">Sitio web oficial</div>
+        <div class="contact-card-name">Taca Taca · Bezza Pay</div>
+        <div style="font-size:11.5px;color:var(--g3);margin-bottom:6px">Información de producto, novedades y material comercial</div>
+        <a href="https://www.taca-taca.com.ar/" target="_blank" rel="noopener" class="web-link">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          www.taca-taca.com.ar
+        </a>
+      </div>
+    </div>`;
+}
+
+// ════════════════════════════════════════════
+// RENDER SEG
+// ════════════════════════════════════════════
+let activeSeg='overview', activeInfo='todo';
+
+const INFO_TABS=[
+  {id:'todo',lbl:'Vista completa'},
+  {id:'cliente',lbl:'Tipo de cliente'},
+  {id:'cobro',lbl:'Modalidad de cobro'},
+  {id:'terminal',lbl:'Terminal y acreditación'},
+  {id:'pricing',lbl:'Condiciones y aranceles'},
+  {id:'promos',lbl:'Promociones'},
+  {id:'canal',lbl:'Canal de derivación'},
+];
+
+function render(){
+  const allTabs=[{id:'overview',label:'Resumen',brand:'ov'},...SEGS.filter(s=>s.id!=='overview')];
+  document.getElementById('nav').innerHTML=allTabs.map(s=>{
+    const on=s.id===activeSeg;
+    let cls='';
+    if(on) cls=s.brand==='fis'?'on':s.brand==='dual'?'on':s.id==='overview'?'on':'on';
+    return `<button class="${cls}" onclick="goSeg('${s.id}')">${s.label}</button>`;
+  }).join('');
+
+  if(activeSeg==='overview'){
+    document.getElementById('content').innerHTML=`<div style="padding-top:4px">${renderOverview()}</div>`;
+    return;
+  }
+
+  const seg=SEGS.find(s=>s.id===activeSeg);
+  const brand=seg.brand;
+  const tabAc=brand==='fis'?'on-fis':brand==='dual'?'on-am':'on-bp';
+  const badgeColor=brand==='fis'?'var(--fisd)':brand==='dual'?'var(--am)':'var(--bpd)';
+
+  const header=`
+    <div class="seg-badge" style="background:${seg.badgeBg};color:#fff">${seg.badge}</div>
+    <div class="seg-title" style="color:${badgeColor}">${seg.label} <span style="font-weight:400;font-size:17px;color:var(--g3)">${seg.range}</span></div>
+    <div class="seg-sub">${seg.desc}</div>`;
+
+  const itabs=`<div class="itabs">${INFO_TABS.map(t=>`<button class="it ${t.id===activeInfo?tabAc:''}" onclick="setInfo('${t.id}')">${t.lbl}</button>`).join('')}</div>`;
+
+  let main='';
+  if(seg.dual){
+    const varsHtml=`<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+      <span style="width:8px;height:8px;border-radius:50%;background:var(--bp);display:inline-block;flex-shrink:0"></span><strong>1–3 locales</strong> → Bezza Pay
+      <span style="color:var(--g3);margin:0 4px">·</span>
+      <span style="width:8px;height:8px;border-radius:50%;background:var(--fis);display:inline-block;flex-shrink:0"></span><strong>4+ sucursales</strong> → Fiserv/Payway
+    </div>${seg.vars.slice(1).map(v=>`<div style="display:flex;gap:6px;align-items:baseline;margin-top:3px"><span style="width:5px;height:5px;border-radius:50%;background:var(--am);display:inline-block;flex-shrink:0;margin-top:5px"></span><span style="font-size:12px">${v}</span></div>`).join('')}`;
+    const cards=seg.options.map(opt=>`
+      <div class="card">
+        <div class="card-top" style="background:${opt.hdrBg}"><div class="card-top-t">${opt.label}</div><div class="card-top-s">${opt.cond}</div></div>
+        <div class="card-body">${buildSections(opt,activeInfo,opt.brand)}</div>
+      </div>`).join('');
+    main=`<div class="dual-note"><strong style="color:var(--am)">Variables a evaluar:</strong><br>${varsHtml}</div><div class="dual">${cards}</div>`;
+  } else {
+    main=`<div class="cards"><div class="card">
+      <div class="card-top" style="background:${seg.badgeBg}"><div class="card-top-t">${seg.pv}</div><div class="card-top-s">${seg.range}</div></div>
+      <div class="card-body">${buildSections(seg,activeInfo,brand)}</div>
+    </div></div>`;
+  }
+
+  document.getElementById('content').innerHTML=header+itabs+main;
+}
+
+function goSeg(id){activeSeg=id;activeInfo='todo';render();}
+function setInfo(id){activeInfo=id;render();}
+render();
+</script>
+</body>
+</html>
