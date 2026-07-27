@@ -3,6 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script>
+(function(){
+  var KEY = 'bezza_seg_auth';
+  var PWD = 'BancorBezzapay2026';
+  if(sessionStorage.getItem(KEY) === 'ok') return;
+  document.addEventListener('DOMContentLoaded', function(){
+    document.body.style.display = 'none';
+    var overlay = document.createElement('div');
+    overlay.id = 'auth-overlay';
+    overlay.innerHTML = '<style>#auth-overlay{position:fixed;inset:0;background:#004040;display:flex;align-items:center;justify-content:center;z-index:99999;font-family:Segoe UI,system-ui,Arial,sans-serif}.auth-box{background:#fff;border-radius:16px;padding:40px 36px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center}.auth-logo{width:52px;height:52px;background:linear-gradient(135deg,#D4006A,#A80055);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:22px}.auth-title{font-size:18px;font-weight:700;color:#004040;margin-bottom:4px}.auth-sub{font-size:12.5px;color:#6B8080;margin-bottom:28px;line-height:1.4}.auth-label{display:block;font-size:11px;font-weight:600;color:#6B8080;text-transform:uppercase;letter-spacing:.06em;text-align:left;margin-bottom:6px}.auth-input{width:100%;padding:11px 14px;border-radius:9px;border:1.5px solid #D8E4E4;font-size:14px;outline:none;transition:border-color .15s}.auth-input:focus{border-color:#004040;box-shadow:0 0 0 3px rgba(0,64,64,.1)}.auth-btn{width:100%;margin-top:14px;padding:12px;border-radius:9px;border:none;background:#004040;color:#fff;font-size:14px;font-weight:600;cursor:pointer}.auth-btn:hover{background:#006B6B}.auth-error{margin-top:12px;font-size:12px;color:#B71C1C;background:#FDEAEA;border-radius:7px;padding:8px 12px;display:none}.auth-footer{margin-top:22px;font-size:11px;color:#aaa}</style><div class="auth-box"><div class="auth-logo">B</div><div class="auth-title">Segmentacion Comercial</div><div class="auth-sub">Bezza Pay · Sucursales Bancor<br>Ingresa la clave para acceder</div><label class="auth-label">Clave de acceso</label><input class="auth-input" id="auth-input" type="password" placeholder="••••••••••" autocomplete="off"><button class="auth-btn" onclick="checkPwd()">Ingresar</button><div class="auth-error" id="auth-error">Clave incorrecta. Verifica e intenta de nuevo.</div><div class="auth-footer">Uso interno · Bezza Pay</div></div>';
+    document.body.appendChild(overlay);
+    document.body.style.display = '';
+    document.getElementById('auth-input').addEventListener('keydown', function(e){
+      if(e.key === 'Enter') checkPwd();
+    });
+  });
+  window.checkPwd = function(){
+    var val = document.getElementById('auth-input').value;
+    if(val === PWD){
+      sessionStorage.setItem(KEY, 'ok');
+      document.getElementById('auth-overlay').remove();
+    } else {
+      document.getElementById('auth-error').style.display = 'block';
+      document.getElementById('auth-input').value = '';
+      document.getElementById('auth-input').focus();
+    }
+  };
+})();
+</script>
+
 <title>Segmentación Comercial · Bezza Pay / Fiserv</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
